@@ -1,0 +1,26 @@
+{
+    "XGBoost": {
+        "OOF_AUC": 0.7869,
+        "Gini_Coefficient": 0.5739,
+        "KS_Statistic": 42.85,
+        "Brier_Score": 0.06584
+    },
+    "LightGBM": {
+        "OOF_AUC": 0.7856,
+        "Gini_Coefficient": 0.5711,
+        "KS_Statistic": 42.83,
+        "Brier_Score": 0.06598
+    },
+    "CatBoost": {
+        "OOF_AUC": 0.7847,
+        "Gini_Coefficient": 0.5694,
+        "KS_Statistic": 42.81,
+        "Brier_Score": 0.06595
+    },
+    "RandomForest": {
+        "OOF_AUC": 0.7592,
+        "Gini_Coefficient": 0.5184,
+        "KS_Statistic": 38.09,
+        "Brier_Score": 0.06766
+    }
+}

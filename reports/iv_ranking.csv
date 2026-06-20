@@ -1,0 +1,165 @@
+rank,feature,iv,flag,keep
+1,EXT_SOURCE_3,0.313725,Strong,True
+2,EXT_SOURCE_2,0.30622,Strong,True
+3,EXT_SOURCE_1,0.135894,Medium,True
+4,CREDIT_TERM,0.126837,Medium,True
+5,bureau_days_credit_mean,0.114992,Medium,True
+6,DAYS_EMPLOYED,0.107139,Medium,True
+7,GOODS_CREDIT_RATIO,0.088357,Weak,True
+8,DAYS_BIRTH,0.084175,Weak,True
+9,prev_refused_ratio,0.066604,Weak,True
+10,bureau_debt_credit_ratio,0.061236,Weak,True
+11,inst_late_ratio,0.060229,Weak,True
+12,bureau_active_ratio,0.059812,Weak,True
+13,DAYS_EMPLOYED_RATIO,0.057253,Weak,True
+14,REGION_RATING_CLIENT_W_CITY,0.051189,Weak,True
+15,prev_approved_ratio,0.05018,Weak,True
+16,NAME_EDUCATION_TYPE_Higher education,0.049199,Weak,True
+17,inst_days_past_due_mean,0.048767,Weak,True
+18,REGION_RATING_CLIENT,0.048303,Weak,True
+19,DAYS_LAST_PHONE_CHANGE,0.046669,Weak,True
+20,prev_refused_count,0.045588,Weak,True
+21,NAME_INCOME_TYPE_Working,0.045314,Weak,True
+22,AMT_CREDIT,0.045059,Weak,True
+23,inst_payment_diff_mean,0.043669,Weak,True
+24,cc_utilization_mean,0.043466,Weak,True
+25,CODE_GENDER_F,0.038592,Weak,True
+26,DAYS_ID_PUBLISH,0.038443,Weak,True
+27,NAME_EDUCATION_TYPE_Secondary / secondary special,0.03648,Weak,True
+28,prev_days_decision_mean,0.036421,Weak,True
+29,inst_payment_diff_sum,0.036308,Weak,True
+30,prev_down_payment_mean,0.036288,Weak,True
+31,CREDIT_DOWNPAYMENT,0.035749,Weak,True
+32,inst_days_past_due_max,0.034763,Weak,True
+33,cc_drawings_mean,0.034682,Weak,True
+34,bureau_closed_count,0.033879,Weak,True
+35,FLAG_EMP_PHONE,0.032891,Weak,True
+36,REG_CITY_NOT_WORK_CITY,0.032213,Weak,True
+37,inst_payment_diff_max,0.030801,Weak,True
+38,bureau_days_enddate_max,0.030117,Weak,True
+39,cc_balance_mean,0.029685,Weak,True
+40,cc_utilization_max,0.029204,Weak,True
+41,FLAG_DOCUMENT_3,0.028571,Weak,True
+42,inst_late_payment_count,0.028416,Weak,True
+43,pos_months_count,0.027671,Weak,True
+44,DAYS_REGISTRATION,0.026864,Weak,True
+45,AMT_ANNUITY,0.026581,Weak,True
+46,bureau_active_count,0.025513,Weak,True
+47,bureau_credit_mean,0.024636,Weak,True
+48,bureau_credit_max,0.02333,Weak,True
+49,FLAG_DOCS_SUM,0.022735,Weak,True
+50,pos_dpd_def_mean,0.022595,Weak,True
+51,REG_CITY_NOT_LIVE_CITY,0.022312,Weak,True
+52,prev_revolving_count,0.020949,Weak,True
+53,pos_dpd_def_max,0.018944,Useless,False
+54,bureau_credit_sum,0.018592,Useless,False
+55,pos_cnt_instalment_mean,0.018457,Useless,False
+56,pos_completed_count,0.016164,Useless,False
+57,inst_amt_payment_mean,0.015604,Useless,False
+58,NAME_CONTRACT_TYPE,0.015023,Useless,False
+59,inst_on_time_count,0.014904,Useless,False
+60,pos_dpd_mean,0.014461,Useless,False
+61,cc_balance_max,0.014284,Useless,False
+62,prev_annuity_mean,0.013415,Useless,False
+63,DEF_30_CNT_SOCIAL_CIRCLE,0.013371,Useless,False
+64,LIVE_CITY_NOT_WORK_CITY,0.013234,Useless,False
+65,bureau_loan_count,0.012975,Useless,False
+66,FLAG_DOCUMENT_6,0.012809,Useless,False
+67,DEF_60_CNT_SOCIAL_CIRCLE,0.012267,Useless,False
+68,bureau_bad_debt_count,0.012224,Useless,False
+69,cc_payment_mean,0.012182,Useless,False
+70,prev_approved_count,0.011809,Useless,False
+71,prev_consumer_ratio,0.011729,Useless,False
+72,cc_drawings_max,0.011286,Useless,False
+73,AMT_INCOME_TOTAL,0.010754,Useless,False
+74,OCCUPATION_TYPE_Drivers,0.010704,Useless,False
+75,bureau_debt_sum,0.010505,Useless,False
+76,ORGANIZATION_TYPE_Self-employed,0.010459,Useless,False
+77,FLAG_WORK_PHONE,0.010333,Useless,False
+78,NAME_HOUSING_TYPE_With parents,0.010295,Useless,False
+79,NAME_HOUSING_TYPE_House / apartment,0.009994,Useless,False
+80,CREDIT_INCOME_RATIO,0.009834,Useless,False
+81,HOUR_APPR_PROCESS_START,0.009812,Useless,False
+82,bureau_bad_debt_flag,0.009087,Useless,False
+83,NAME_FAMILY_STATUS_Single / not married,0.008813,Useless,False
+84,NAME_INCOME_TYPE_State servant,0.008513,Useless,False
+85,pos_dpd_max,0.008388,Useless,False
+86,NAME_FAMILY_STATUS_Married,0.008287,Useless,False
+87,FLAG_PHONE,0.007938,Useless,False
+88,OCCUPATION_TYPE_Accountants,0.00782,Useless,False
+89,ORGANIZATION_TYPE_Business Entity Type 3,0.007415,Useless,False
+90,prev_cash_count,0.007137,Useless,False
+91,cc_months_count,0.006849,Useless,False
+92,FLAG_OWN_CAR,0.006594,Useless,False
+93,AMT_REQ_CREDIT_BUREAU_QRT,0.006357,Useless,False
+94,prev_app_count,0.006312,Useless,False
+95,NAME_FAMILY_STATUS_Civil marriage,0.006269,Useless,False
+96,OCCUPATION_TYPE_Core staff,0.00618,Useless,False
+97,prev_consumer_count,0.00603,Useless,False
+98,NAME_FAMILY_STATUS_Widow,0.005808,Useless,False
+99,OCCUPATION_TYPE_Managers,0.005217,Useless,False
+100,prev_canceled_count,0.00494,Useless,False
+101,prev_credit_max,0.004844,Useless,False
+102,OCCUPATION_TYPE_Sales staff,0.004795,Useless,False
+103,ORGANIZATION_TYPE_Construction,0.004478,Useless,False
+104,pos_late_count,0.00442,Useless,False
+105,NAME_HOUSING_TYPE_Rented apartment,0.004355,Useless,False
+106,CNT_FAM_MEMBERS,0.003221,Useless,False
+107,prev_credit_mean,0.003214,Useless,False
+108,prev_canceled_ratio,0.003088,Useless,False
+109,ORGANIZATION_TYPE_School,0.00287,Useless,False
+110,OCCUPATION_TYPE_High skill tech staff,0.002859,Useless,False
+111,OCCUPATION_TYPE_Security staff,0.002552,Useless,False
+112,AMT_REQ_CREDIT_BUREAU_MON,0.00254,Useless,False
+113,cc_limit_mean,0.002001,Useless,False
+114,NAME_INCOME_TYPE_Commercial associate,0.001955,Useless,False
+115,OCCUPATION_TYPE_Cooking staff,0.001801,Useless,False
+116,CNT_CHILDREN,0.00168,Useless,False
+117,ORGANIZATION_TYPE_Medicine,0.001652,Useless,False
+118,NAME_EDUCATION_TYPE_Lower secondary,0.00163,Useless,False
+119,OBS_30_CNT_SOCIAL_CIRCLE,0.001556,Useless,False
+120,ORGANIZATION_TYPE_Industry: type 3,0.001127,Useless,False
+121,OCCUPATION_TYPE_Medicine staff,0.001052,Useless,False
+122,ORGANIZATION_TYPE_Trade: type 3,0.000965,Useless,False
+123,AMT_REQ_CREDIT_BUREAU_YEAR,0.000964,Useless,False
+124,NAME_TYPE_SUITE_Family,0.000936,Useless,False
+125,FLAG_DOCUMENT_8,0.000903,Useless,False
+126,ORGANIZATION_TYPE_Trade: type 7,0.000844,Useless,False
+127,ORGANIZATION_TYPE_Government,0.000806,Useless,False
+128,NAME_TYPE_SUITE_Unaccompanied,0.000734,Useless,False
+129,bureau_prolong_sum,0.000661,Useless,False
+130,ORGANIZATION_TYPE_Security,0.000647,Useless,False
+131,REG_REGION_NOT_WORK_REGION,0.000626,Useless,False
+132,OCCUPATION_TYPE_Cleaning staff,0.000613,Useless,False
+133,FLAG_OWN_REALTY,0.000506,Useless,False
+134,ORGANIZATION_TYPE_Kindergarten,0.00047,Useless,False
+135,ORGANIZATION_TYPE_Transport: type 4,0.00045,Useless,False
+136,ORGANIZATION_TYPE_Industry: type 9,0.000416,Useless,False
+137,REG_REGION_NOT_LIVE_REGION,0.000398,Useless,False
+138,WEEKDAY_APPR_PROCESS_START_MONDAY,0.000361,Useless,False
+139,WEEKDAY_APPR_PROCESS_START_TUESDAY,0.000295,Useless,False
+140,ORGANIZATION_TYPE_Other,0.000195,Useless,False
+141,AMT_REQ_CREDIT_BUREAU_WEEK,0.000159,Useless,False
+142,NAME_HOUSING_TYPE_Municipal apartment,0.000148,Useless,False
+143,ORGANIZATION_TYPE_Business Entity Type 2,0.000133,Useless,False
+144,OCCUPATION_TYPE_Laborers,0.000112,Useless,False
+145,LIVE_REGION_NOT_WORK_REGION,0.000107,Useless,False
+146,NAME_EDUCATION_TYPE_Incomplete higher,0.000106,Useless,False
+147,NAME_TYPE_SUITE_Children,9.5e-05,Useless,False
+148,WEEKDAY_APPR_PROCESS_START_SATURDAY,7.7e-05,Useless,False
+149,FLAG_EMAIL,4.1e-05,Useless,False
+150,WEEKDAY_APPR_PROCESS_START_WEDNESDAY,2.8e-05,Useless,False
+151,"NAME_TYPE_SUITE_Spouse, partner",2.8e-05,Useless,False
+152,WEEKDAY_APPR_PROCESS_START_SUNDAY,2e-05,Useless,False
+153,WEEKDAY_APPR_PROCESS_START_FRIDAY,2e-05,Useless,False
+154,NAME_FAMILY_STATUS_Separated,1.9e-05,Useless,False
+155,WEEKDAY_APPR_PROCESS_START_THURSDAY,3e-06,Useless,False
+156,ORGANIZATION_TYPE_Business Entity Type 1,2e-06,Useless,False
+157,FLAG_DOCUMENT_5,1e-06,Useless,False
+158,bureau_overdue_mean,0.0,Useless,False
+159,bureau_overdue_max,0.0,Useless,False
+160,bureau_overdue_days_max,0.0,Useless,False
+161,cc_dpd_max,0.0,Useless,False
+162,cc_dpd_mean,0.0,Useless,False
+163,cc_dpd_def_mean,0.0,Useless,False
+164,cc_late_count,0.0,Useless,False

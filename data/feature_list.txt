@@ -1,0 +1,195 @@
+Total features: 170
+
+=== Top 20 by |correlation with TARGET| ===
+0.2208  EXT_SOURCE_MEAN
+0.1928  EXT_SOURCE_MIN
+0.1603  EXT_SOURCE_2
+0.1559  EXT_SOURCE_3
+0.0989  EXT_SOURCE_1
+0.0840  bureau_days_credit_mean
+0.0782  DAYS_BIRTH
+0.0779  prev_refused_ratio
+0.0705  inst_late_ratio
+0.0675  cc_utilization_mean
+0.0660  bureau_debt_credit_ratio
+0.0648  prev_refused_count
+0.0634  DAYS_EMPLOYED
+0.0609  REGION_RATING_CLIENT_W_CITY
+0.0601  GOODS_CREDIT_RATIO
+0.0589  REGION_RATING_CLIENT
+0.0575  NAME_INCOME_TYPE_Working
+0.0566  NAME_EDUCATION_TYPE_Higher education
+0.0552  DAYS_LAST_PHONE_CHANGE
+0.0547  CODE_GENDER_F
+
+=== All features ===
+NAME_CONTRACT_TYPE
+FLAG_OWN_CAR
+FLAG_OWN_REALTY
+CNT_CHILDREN
+AMT_INCOME_TOTAL
+AMT_CREDIT
+AMT_ANNUITY
+DAYS_BIRTH
+DAYS_EMPLOYED
+DAYS_REGISTRATION
+DAYS_ID_PUBLISH
+FLAG_EMP_PHONE
+FLAG_WORK_PHONE
+FLAG_PHONE
+FLAG_EMAIL
+CNT_FAM_MEMBERS
+REGION_RATING_CLIENT
+REGION_RATING_CLIENT_W_CITY
+HOUR_APPR_PROCESS_START
+REG_REGION_NOT_LIVE_REGION
+REG_REGION_NOT_WORK_REGION
+LIVE_REGION_NOT_WORK_REGION
+REG_CITY_NOT_LIVE_CITY
+REG_CITY_NOT_WORK_CITY
+LIVE_CITY_NOT_WORK_CITY
+EXT_SOURCE_1
+EXT_SOURCE_2
+EXT_SOURCE_3
+OBS_30_CNT_SOCIAL_CIRCLE
+DEF_30_CNT_SOCIAL_CIRCLE
+DEF_60_CNT_SOCIAL_CIRCLE
+DAYS_LAST_PHONE_CHANGE
+FLAG_DOCUMENT_3
+FLAG_DOCUMENT_5
+FLAG_DOCUMENT_6
+FLAG_DOCUMENT_8
+AMT_REQ_CREDIT_BUREAU_WEEK
+AMT_REQ_CREDIT_BUREAU_MON
+AMT_REQ_CREDIT_BUREAU_QRT
+AMT_REQ_CREDIT_BUREAU_YEAR
+CREDIT_INCOME_RATIO
+CREDIT_TERM
+GOODS_CREDIT_RATIO
+CREDIT_DOWNPAYMENT
+DAYS_EMPLOYED_RATIO
+FLAG_DOCS_SUM
+bureau_loan_count
+bureau_active_count
+bureau_closed_count
+bureau_credit_sum
+bureau_credit_mean
+bureau_credit_max
+bureau_debt_sum
+bureau_overdue_mean
+bureau_overdue_max
+bureau_days_credit_mean
+bureau_days_enddate_max
+bureau_bad_debt_count
+bureau_overdue_days_max
+bureau_prolong_sum
+bureau_bad_debt_flag
+bureau_active_ratio
+bureau_debt_credit_ratio
+prev_app_count
+prev_approved_count
+prev_refused_count
+prev_canceled_count
+prev_credit_mean
+prev_credit_max
+prev_annuity_mean
+prev_down_payment_mean
+prev_days_decision_mean
+prev_consumer_count
+prev_cash_count
+prev_revolving_count
+prev_refused_ratio
+prev_approved_ratio
+prev_canceled_ratio
+prev_consumer_ratio
+inst_payment_diff_mean
+inst_payment_diff_max
+inst_payment_diff_sum
+inst_days_past_due_mean
+inst_days_past_due_max
+inst_late_payment_count
+inst_on_time_count
+inst_amt_payment_mean
+inst_late_ratio
+pos_dpd_mean
+pos_dpd_max
+pos_dpd_def_mean
+pos_dpd_def_max
+pos_months_count
+pos_cnt_instalment_mean
+pos_completed_count
+pos_late_count
+cc_balance_mean
+cc_balance_max
+cc_limit_mean
+cc_utilization_mean
+cc_utilization_max
+cc_dpd_mean
+cc_dpd_max
+cc_dpd_def_mean
+cc_months_count
+cc_drawings_mean
+cc_drawings_max
+cc_payment_mean
+cc_late_count
+CODE_GENDER_F
+NAME_TYPE_SUITE_Children
+NAME_TYPE_SUITE_Family
+NAME_TYPE_SUITE_Spouse, partner
+NAME_TYPE_SUITE_Unaccompanied
+NAME_INCOME_TYPE_Commercial associate
+NAME_INCOME_TYPE_State servant
+NAME_INCOME_TYPE_Working
+NAME_EDUCATION_TYPE_Higher education
+NAME_EDUCATION_TYPE_Incomplete higher
+NAME_EDUCATION_TYPE_Lower secondary
+NAME_EDUCATION_TYPE_Secondary / secondary special
+NAME_FAMILY_STATUS_Civil marriage
+NAME_FAMILY_STATUS_Married
+NAME_FAMILY_STATUS_Separated
+NAME_FAMILY_STATUS_Single / not married
+NAME_FAMILY_STATUS_Widow
+NAME_HOUSING_TYPE_House / apartment
+NAME_HOUSING_TYPE_Municipal apartment
+NAME_HOUSING_TYPE_Rented apartment
+NAME_HOUSING_TYPE_With parents
+OCCUPATION_TYPE_Accountants
+OCCUPATION_TYPE_Cleaning staff
+OCCUPATION_TYPE_Cooking staff
+OCCUPATION_TYPE_Core staff
+OCCUPATION_TYPE_Drivers
+OCCUPATION_TYPE_High skill tech staff
+OCCUPATION_TYPE_Laborers
+OCCUPATION_TYPE_Managers
+OCCUPATION_TYPE_Medicine staff
+OCCUPATION_TYPE_Sales staff
+OCCUPATION_TYPE_Security staff
+WEEKDAY_APPR_PROCESS_START_FRIDAY
+WEEKDAY_APPR_PROCESS_START_MONDAY
+WEEKDAY_APPR_PROCESS_START_SATURDAY
+WEEKDAY_APPR_PROCESS_START_SUNDAY
+WEEKDAY_APPR_PROCESS_START_THURSDAY
+WEEKDAY_APPR_PROCESS_START_TUESDAY
+WEEKDAY_APPR_PROCESS_START_WEDNESDAY
+ORGANIZATION_TYPE_Business Entity Type 1
+ORGANIZATION_TYPE_Business Entity Type 2
+ORGANIZATION_TYPE_Business Entity Type 3
+ORGANIZATION_TYPE_Construction
+ORGANIZATION_TYPE_Government
+ORGANIZATION_TYPE_Industry: type 3
+ORGANIZATION_TYPE_Industry: type 9
+ORGANIZATION_TYPE_Kindergarten
+ORGANIZATION_TYPE_Medicine
+ORGANIZATION_TYPE_Other
+ORGANIZATION_TYPE_School
+ORGANIZATION_TYPE_Security
+ORGANIZATION_TYPE_Self-employed
+ORGANIZATION_TYPE_Trade: type 3
+ORGANIZATION_TYPE_Trade: type 7
+ORGANIZATION_TYPE_Transport: type 4
+STRESS_AGE_X_CREDIT
+STRESS_EMP_X_ANNUITY
+STRESS_DOCS_X_CREDIT
+CLEAN_BUREAU_HIGH_LTI
+EXT_SOURCE_MEAN
+EXT_SOURCE_MIN

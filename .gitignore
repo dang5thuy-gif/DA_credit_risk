@@ -1,0 +1,41 @@
+# === Data files (too large for GitHub) ===
+data/*.csv
+data/*.parquet
+data/cleaned/*.parquet
+!data/results_df.parquet
+!data/shap_values_sample.parquet
+
+# === Model files ===
+# (We allow models so the dashboard can run immediately upon clone)
+
+# === Python cache ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# === Jupyter ===
+.ipynb_checkpoints/
+*.ipynb
+
+# === Environment ===
+.env
+.venv/
+venv/
+env/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+
+# === Reports (large PNGs optional) ===
+# reports/*.png   # Uncomment to exclude SHAP images from repo

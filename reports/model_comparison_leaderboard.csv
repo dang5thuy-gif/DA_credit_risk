@@ -1,0 +1,5 @@
+Model,OOF_AUC,Gini_Coefficient,KS_Statistic,Brier_Score
+XGBoost,0.7869,0.5739,42.85,0.06584
+LightGBM,0.7856,0.5711,42.83,0.06598
+CatBoost,0.7847,0.5694,42.81,0.06595
+RandomForest,0.7592,0.5184,38.09,0.06766
