@@ -16,9 +16,9 @@
 2. [Đóng Góp Kỹ Thuật & Khung Nghiệp Vụ](#-đóng-góp-kỹ-thuật--khung-nghiệp-vụ)
 3. [Hiệu Năng Mô Hình (Model Performance)](#-hiệu-năng-mô-hình)
 4. [Pipeline Logic](#-pipeline-logic)
-5. [📊 Hệ Thống Dashboard Tác Nghiệp (Power BI)](#-hệ-thống-dashboard-tác-nghiệp-power-bi)
-6. [⚙️ Hướng Dẫn Chạy Dự Án](#️-hướng-dẫn-chạy-dự-án)
-7. [📂 Cấu Trúc Thư Mục](#-cấu-trúc-thư-mục)
+5. [Hệ Thống Dashboard Tác Nghiệp (Power BI)](#-hệ-thống-dashboard-tác-nghiệp-power-bi)
+6. [Hướng Dẫn Chạy Dự Án](#️-hướng-dẫn-chạy-dự-án)
+7. [Cấu Trúc Thư Mục](#-cấu-trúc-thư-mục)
 
 ---
 
