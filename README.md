@@ -78,15 +78,13 @@ Hệ thống sử dụng các chỉ số đo lường quy chuẩn của ngành q
 ---
 
 ## 📊 Hệ Thống Dashboard Tác Nghiệp (Power BI)
-Để chuyển hóa các con số kỹ thuật từ Pipeline Python thành giao diện tương tác trực quan cho các Giám đốc Quản trị rủi ro (CRO) và Ban điều hành ra quyết định, dự án tích hợp hệ thống **Power BI Credit Risk Dashboard**.
+Dự án tích hợp hệ thống Power BI Credit Risk Dashboard nhằm chuyển hóa các con số kỹ thuật từ Pipeline thành giao diện tương tác trực quan, hỗ trợ Giám đốc Quản trị rủi ro (CRO) và Ban điều hành đưa ra các quyết định chiến lược.
 
-### 🛠 Kết nối Nguồn Dữ liệu (Data Integration Flow)
-Dashboard kết nối trực tiếp với các tệp đầu ra của Pipeline thông qua Python/Parquet Connector:
-* `data/results_df.parquet` $\rightarrow$ Cung cấp ID khách hàng, nhãn thực tế (`TARGET`), và xác suất vỡ nợ hiệu chuẩn (`PRED_PROB`).
-* `reports/model_comparison_leaderboard.csv` $\rightarrow$ Nạp các chỉ số KPI động của mô hình lên Dashboard.
-
-## 📊 Hệ Thống Dashboard Quản Trị Rủi Ro (Power BI)
-Để chuyển hóa các con số mã nguồn phức tạp từ Pipeline thành giao diện tương tác trực quan cho các Giám đốc Quản trị rủi ro (CRO) và Ban điều hành, dự án tích hợp hệ thống **Power BI Credit Risk Dashboard** với cấu trúc báo cáo tác nghiệp 7 thành phần chuyên sâu:
+### 🛠 Kết nối Nguồn Dữ liệu (Single Source of Truth)
+Để đơn giản hóa quy trình và tăng tốc độ xử lý, toàn bộ kết quả đã được đóng gói tập trung:
+* **Single-Source Integration:** Dashboard kết nối trực tiếp với tệp `data/results_df.parquet` thông qua Power BI Parquet Connector.
+* **Data Content:** Tệp này chứa ID khách hàng, nhãn thực tế (`TARGET`), xác suất vỡ nợ hiệu chuẩn (`PRED_PROB`), các đặc trưng quan trọng và KPI mô hình.
+* **Lợi ích:** Đảm bảo tính nhất quán (Single Source of Truth), giảm thiểu rủi ro lỗi dữ liệu và giúp Dashboard vận hành mượt mà với các phân tích đa chiều.
 
 ### 🎯 Các Thành phần Trực quan hóa Cốt lõi (Core Visuals Architecture)
 Dashboard được chia thành các cụm phân tích chiến lược nhằm bóc tách rủi ro toàn diện:
