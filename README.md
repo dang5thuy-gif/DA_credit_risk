@@ -53,7 +53,7 @@ Hệ thống sử dụng các chỉ số đo lường quy chuẩn của ngành q
 *Ghi chú: Kết quả trên được trích xuất tự động từ luồng thực nghiệm K-Fold và đồng bộ chính xác 100% với tập tin báo cáo hiệu năng `reports/model_comparison_leaderboard.csv`.*
 
 ### 📊 Đồ thị So sánh & Hiệu chuẩn Thực nghiệm
-Để chứng minh khoa học năng lực của mô hình với Hội đồng/Doanh nghiệp, hệ thống tự động kết xuất các biểu đồ trực quan dưới đây:
+Hệ thống tự động kết xuất các biểu đồ trực quan để kiểm chứng năng lực kỹ thuật:
 
 | So sánh đường cong ROC (Out-Of-Fold) | Đường cong hiệu chuẩn xác suất (Calibration Curve) |
 | :---: | :---: |
@@ -78,7 +78,7 @@ Hệ thống sử dụng các chỉ số đo lường quy chuẩn của ngành q
 ---
 
 ## 📊 Hệ Thống Dashboard Tác Nghiệp (Power BI)
-Dự án tích hợp hệ thống Power BI Credit Risk Dashboard nhằm chuyển hóa các con số kỹ thuật từ Pipeline thành giao diện tương tác trực quan, hỗ trợ Giám đốc Quản trị rủi ro (CRO) và Ban điều hành đưa ra các quyết định chiến lược.
+Dự án tích hợp hệ thống Power BI Credit Risk Dashboard nhằm chuyển hóa các con số kỹ thuật từ Pipeline thành giao diện tương tác trực quan, phục vụ mục đích phân tích rủi ro và hỗ trợ quá trình ra quyết định.
 
 ### 🛠 Kết nối Nguồn Dữ liệu (Single Source of Truth)
 Để đơn giản hóa quy trình và tăng tốc độ xử lý, toàn bộ kết quả đã được đóng gói tập trung:
