@@ -48,7 +48,7 @@ Hệ thống sử dụng các chỉ số đo lường quy chuẩn của ngành q
 | **Random Forest** | 0.7592 | 0.5184 | 38.09% | 0.06766 | Benchmark |
 | **CatBoost** | 0.7847 | 0.5694 | 42.81% | 0.06595 | Contender |
 | **LightGBM** | 0.7856 | 0.5711 | 42.83% | 0.06598 | Contender |
-| **XGBoost** | **0.7869** | **0.5739** | **42.85%** | **0.06584** | 🏆 **Champion (Winner)** |
+| **XGBoost** | **0.7869** | **0.5739** | **42.85%** | **0.06584** | **Champion** |
 
 *Ghi chú: Kết quả trên được trích xuất tự động từ luồng thực nghiệm K-Fold và đồng bộ chính xác 100% với tập tin báo cáo hiệu năng `reports/model_comparison_leaderboard.csv`.*
 
