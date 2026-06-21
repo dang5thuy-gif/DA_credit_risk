@@ -246,7 +246,7 @@ APP_DIR = Path(__file__).resolve().parent
 ROOT_DIR = APP_DIR.parent
 DATA_DIR = str(ROOT_DIR / 'data')
 
-@st.cache_data
+@st.cache_data(max_entries=1, ttl=3600)
 def load():
     df = None
     for fn in ['results_ifrs9.parquet', 'results_df.parquet']:
@@ -277,6 +277,7 @@ def load():
     if 'AMT_CREDIT' not in df.columns: df['AMT_CREDIT'] = 500000.0
     if 'AMT_ANNUITY' not in df.columns: df['AMT_ANNUITY'] = 25000.0
     if 'AMT_INCOME_TOTAL' not in df.columns: df['AMT_INCOME_TOTAL'] = 150000.0
+    
     # Thay vì gán cứng 1 chữ 'Working', ta phân bổ ngẫu nhiên các nhóm ngành nghề
     if 'NAME_INCOME_TYPE' not in df.columns:
         df['NAME_INCOME_TYPE'] = np.random.choice(
@@ -284,7 +285,7 @@ def load():
             size=len(df), 
             p=[0.55, 0.22, 0.16, 0.07]
         )
-    # 1. Kích hoạt Slicer Family Status (Phân bổ ngẫu nhiên thay vì gán cứng 'Married')
+    # 1. Kích hoạt Slicer Family Status
     if 'NAME_FAMILY_STATUS' not in df.columns or df['NAME_FAMILY_STATUS'].nunique() <= 1:
         df['NAME_FAMILY_STATUS'] = np.random.choice(
             ['Married', 'Single / not married', 'Separated', 'Widow'], 
@@ -294,7 +295,6 @@ def load():
 
     # 2. Kích hoạt Slicer Risk Tier
     if 'RISK_TIER' not in df.columns:
-        # Nếu có xác suất dự báo PRED_PROB, ta phân vùng Tier dựa trên mức độ rủi ro thực tế
         if 'PRED_PROB' in df.columns:
             df['RISK_TIER'] = np.select(
                 [df['PRED_PROB'] < 0.08, df['PRED_PROB'] < 0.18, df['PRED_PROB'] < 0.40],
@@ -308,7 +308,7 @@ def load():
                 p=[0.45, 0.35, 0.15, 0.05]
             )
 
-    # 3. Kích hoạt Slicer Region Rating (Cần các giá trị số 1.0, 2.0, 3.0 để khớp bộ lọc selectbox)
+    # 3. Kích hoạt Slicer Region Rating
     if 'REGION_RATING_CLIENT_W_CITY' not in df.columns:
         df['REGION_RATING_CLIENT_W_CITY'] = np.random.choice(
             [1.0, 2.0, 3.0], 
@@ -317,17 +317,14 @@ def load():
         )
     
     if 'DAYS_ID_PUBLISH' not in df.columns: df['DAYS_ID_PUBLISH'] = -1000
-    
-    # Xử lý dự phòng cho DAYS_BIRTH và DAYS_EMPLOYED để không bị bẻ gãy tính toán Cohort
-    if 'DAYS_BIRTH' not in df.columns: df['DAYS_BIRTH'] = -14600  # tương đương ~40 tuổi
-    if 'DAYS_EMPLOYED' not in df.columns: df['DAYS_EMPLOYED'] = -1825 # tương đương ~5 năm kinh nghiệm
+    if 'DAYS_BIRTH' not in df.columns: df['DAYS_BIRTH'] = -14600  
+    if 'DAYS_EMPLOYED' not in df.columns: df['DAYS_EMPLOYED'] = -1825 
 
     # Loan term bins (months)
     df['TERM_M'] = (df['AMT_CREDIT'] / df['AMT_ANNUITY'].clip(lower=1)).round(0)
     df['TERM_BIN'] = pd.cut(df['TERM_M'], [-1, 18, 30, 42, 9999],
                              labels=['≤18m', '24m', '36m', '48m+'])
 
-    # Đồng bộ CREDIT_TERM nếu chưa được khởi tạo
     if 'CREDIT_TERM' not in df.columns:
         df['CREDIT_TERM'] = df['TERM_M'].fillna(24).clip(6, 60)
 
@@ -372,8 +369,41 @@ def load():
     if 'ECL' not in df.columns:
         df['ECL'] = df['PRED_PROB'] * 0.45 * df['AMT_CREDIT']
 
-    return df
-
+    # ═══════════════════════════════════════════════════════════════
+    # BƯỚC THỐNG NHẤT: BẢO VỆ BỘ NHỚ RAM KHỎI MEMORY ERROR
+    # ═══════════════════════════════════════════════════════════════
+    # Danh sách các cột thực sự cần thiết để giao diện Streamlit render biểu đồ và slicers
+    cols_for_streamlit = [
+        # Định danh & Đầu ra Mô hình rủi ro
+        'SK_ID_CURR', 'TARGET', 'PRED_PROB', 'STAGE', 'ECL', 'EAD',
+        'Decision_Status', 'Credit_Band', 
+        
+        # Tài chính cơ sở
+        'AMT_CREDIT', 'AMT_ANNUITY', 'AMT_INCOME_TOTAL', 'NAME_CONTRACT_TYPE',
+        
+        # Phân lớp phục vụ bộ lọc (Slicers) và phân tách nhóm
+        'RISK_TIER', 'REGION_RATING_CLIENT_W_CITY', 'NAME_INCOME_TYPE', 'NAME_FAMILY_STATUS',
+        
+        # Các cột phân dải Bins được tạo từ giao diện
+        'TERM_BIN', 'LTI_BIN', 'DTI_BIN', 'CRED_BIN', 'PD_BAND',
+        
+        # Các cột phục vụ động cơ Chuỗi thời gian & Cohort / Vintage nâng cao
+        'DISBURSEMENT_MONTH', 'DAYS_ID_PUBLISH', 'CREDIT_TERM',
+        'DAYS_BIRTH',
+        'DAYS_EMPLOYED'  # <-- THÊM CHÍNH XÁC CỘT NÀY VÀO ĐÂY để tính thâm niên làm việc
+    ]
+    
+    # Ép kiểu dữ liệu để giải phóng RAM tối đa, chống MemoryError
+    for col in cols_for_streamlit:
+        if col in df.columns:
+            if df[col].dtype == 'float64':
+                df[col] = df[col].astype('float32')
+            elif df[col].dtype == 'int64':
+                df[col] = df[col].astype('int32')
+                
+    final_cols = [c for c in cols_for_streamlit if c in df.columns]
+    
+    return df[final_cols]
 df = load()
 
 # ═══════════════════════════════════════════════════════════════════
