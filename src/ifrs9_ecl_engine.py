@@ -351,8 +351,10 @@ if __name__ == '__main__':
     lgd_sensitivity_analysis(result, lgd.mean())
 
     # Save
-    result.to_parquet(f'{DATA_DIR}/results_ifrs9.parquet', index=False)
+    result.to_parquet(f'{DATA_DIR}/results_df.parquet', index=False)
+    log(f"\n   Saved: data/results_df.parquet (Đã tích hợp Stage & ECL)")
     summary.to_csv(f'{REPORTS_DIR}/ifrs9_stage_summary.csv', index=False)
     log(f"\n  Saved: data/results_ifrs9.parquet")
     log(f"  Saved: reports/ifrs9_stage_summary.csv")
     log(f"  Total time: {time.time()-t0:.0f}s")
+    

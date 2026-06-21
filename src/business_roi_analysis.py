@@ -128,29 +128,66 @@ def run_threshold_optimization(df):
 
 
 if __name__ == '__main__':
-    # 1. Đọc dữ liệu kết quả dự báo xác suất nợ xấu từ Phase 3
+    # 1. Đọc dữ liệu kết quả tích hợp từ các bước trước (Mô hình + IFRS9)
     results_path = f'{DATA_DIR}/results_df.parquet'
     if not os.path.exists(results_path):
-        print("ERROR: Không tìm thấy results_df.parquet. Vui lòng chạy modeling.py trước.")
+        print("ERROR: Không tìm thấy results_df.parquet. Vui lòng chạy modeling.py hoặc ifrs9_ecl_engine.py trước.")
         sys.exit(1)
         
     df = pd.read_parquet(results_path)
     
-    # 2. Xử lý đồng bộ cột AMT_CREDIT bằng cách bốc từ train_features.parquet sang
+    # 2. Xử lý gộp TOÀN BỘ các trường dữ liệu từ train_features.parquet
     train_feat_path = f'{DATA_DIR}/train_features.parquet'
     if not os.path.exists(train_feat_path):
-        print("ERROR: Không tìm thấy train_features.parquet để trích xuất khoản tiền vay.")
+        print("ERROR: Không tìm thấy train_features.parquet.")
         sys.exit(1)
         
-    print("Nạp bổ sung trường dữ liệu kinh doanh tài chính (AMT_CREDIT)...")
-    # Đọc duy nhất 2 cột để tối ưu tốc độ và dung lượng bộ nhớ RAM
-    df_amt = pd.read_parquet(train_feat_path, columns=['SK_ID_CURR', 'AMT_CREDIT'])
+    print("Đang nạp TOÀN BỘ dữ liệu đặc trưng từ train_features.parquet...")
+    df_features = pd.read_parquet(train_feat_path)
     
-    # Thực hiện merge vào df chính dựa trên mã khách hàng SK_ID_CURR
-    df = pd.merge(df, df_amt, on='SK_ID_CURR', how='inner')
+    # Xác định các cột chỉ có ở file train gốc (loại trừ các cột đã có trong file kết quả)
+    cols_to_use = [c for c in df_features.columns if c not in df.columns or c == 'SK_ID_CURR']
+    
+    print("Thực hiện gộp (Merge) toàn phần dữ liệu gốc và kết quả phân tích...")
+    df = pd.merge(df, df_features[cols_to_use], on='SK_ID_CURR', how='inner')
+    print("✓ Đã gộp thành công tập dữ liệu đặc trưng.")
+
+    # ═══════════════════════════════════════════════════════════════
+    # ĐOẠN SỬA ĐỔI THEO CÁCH B: GỘP NGƯỢC CỘT CHỮ TỪ FILE CSV GỐC
+    # ═══════════════════════════════════════════════════════════════
+    # Đường dẫn đến file csv gốc chứa văn bản chữ (Bạn kiểm tra lại tên file csv của bạn)
+    raw_csv_path = f'{DATA_DIR}/application_train.csv' 
+    
+    if os.path.exists(raw_csv_path):
+        print("  >> Phát hiện application_train.csv. Đang tiến hành gộp ngược các trường văn bản chữ...")
+        # Chỉ lấy duy nhất các cột chữ cần thiết để tối ưu bộ nhớ
+        df_raw_text = pd.read_csv(raw_csv_path, usecols=['SK_ID_CURR', 'OCCUPATION_TYPE', 'NAME_INCOME_TYPE'])
+        
+        # Merge các cột chữ vào bảng kết quả chính dựa trên mã khách hàng
+        df = pd.merge(df, df_raw_text, on='SK_ID_CURR', how='left')
+        print("✓ Đã kéo thành công các trường OCCUPATION_TYPE và NAME_INCOME_TYPE vào file Parquet!")
+    else:
+        print(f"WARNING: Không tìm thấy file csv gốc tại {raw_csv_path}. Vui lòng kiểm tra lại đường dẫn file.")
+    # ═══════════════════════════════════════════════════════════════
 
     if 'PRED_PROB' not in df.columns:
-        print("ERROR: results_df.parquet thiếu trường dữ liệu PRED_PROB. Vui lòng chạy modeling.py.")
+        print("ERROR: results_df.parquet thiếu trường dữ liệu PRED_PROB.")
         sys.exit(1)
 
+    # 3. Chạy thuật toán tối ưu hóa Threshold
     df_roi, best = run_threshold_optimization(df)
+
+    # 4. Gán nhãn phê duyệt và phân dải điểm tín dụng phục vụ Power BI
+    print("\n  >> Đồng bộ kết quả tối ưu hóa ROI vào tệp lưu trữ...")
+    df['Decision_Status'] = np.where(df['PRED_PROB'] < best['threshold'], 'Approved', 'Denied')
+    
+    unique_prob_count = len(df['PRED_PROB'].unique())
+    target_labels = ['Very Low Risk', 'Low Risk', 'Medium Risk', 'High Risk']
+    
+    df['Credit_Band'] = pd.qcut(df['PRED_PROB'], q=4, 
+                                labels=target_labels[:unique_prob_count] if unique_prob_count < 4 else target_labels,
+                                duplicates='drop')
+    
+    # 5. Thực hiện ghi đè lưu trữ cuối cùng
+    df.to_parquet(results_path, index=False)
+    print(f"✓ HOÀN TẤT PIPELINE TỔNG HỢP THEO PHƯƠNG ÁN B!")
