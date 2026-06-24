@@ -51,31 +51,31 @@ STAGE_THRESHOLDS = {
 
 def classify_stage(df: pd.DataFrame) -> pd.Series:
     """
-    Stage 3 — Credit-impaired (IFRS 9.5.5.3):
-        TARGET == 1, PD > 70%, or DPD > 90 days
-    Stage 2 — Significant increase in credit risk:
-        PD > 20%, bureau bad debt, late ratio > 30%, prev_refused > 50%
-    Stage 1 — Performing (all others)
+    IFRS 9 Stage Classification:
+    Stage 3: Dựa vào xác suất vỡ nợ (PD > 70%) HOẶC cờ quá hạn (bureau_bad_debt_flag == 1)
     """
-    pd_col = df.get('PRED_PROB', df.get('PD', pd.Series(0.1, index=df.index)))
-    stage  = pd.Series(1, index=df.index, dtype=np.int8)
+    # Lấy dữ liệu PD và xử lý NaN
+    pd_col = df.get('PRED_PROB', df.get('PD', pd.Series(0.1, index=df.index))).fillna(0)
+    
+    # Lấy cờ nợ xấu từ dữ liệu (đã xác nhận tồn tại qua debug)
+    bad_debt = df.get('bureau_bad_debt_flag', pd.Series(0, index=df.index)).fillna(0)
+    
+    # Khởi tạo stage mặc định là 1
+    stage = pd.Series(1, index=df.index, dtype=np.int8)
 
-    # Stage 3 — Credit-impaired (IFRS 9.5.5.3):
-    # NOTE: We deliberately do NOT use TARGET==1 here.
-    # In production, future default status is unknown at decision time.
-    # Stage 3 is identified purely via model PD and observable behavioral signals.
-    s3 = (pd_col > STAGE_THRESHOLDS['pd_stage3_floor'])
-    stage[s3] = 3
+    # 1. Gán Stage 3: Nếu PD > 70% HOẶC có cờ nợ xấu
+    s3_mask = (pd_col > STAGE_THRESHOLDS['pd_stage3_floor']) | (bad_debt == 1)
+    stage.loc[s3_mask] = 3
 
-    s2 = (
+    # 2. Gán Stage 2: Nếu thỏa mãn các tiêu chí rủi ro nhưng chưa phải Stage 3
+    # Chúng ta dùng (stage < 3) để đảm bảo không ghi đè những người đã là Stage 3
+    s2_mask = (
         (pd_col > STAGE_THRESHOLDS['pd_stage2_floor']) |
-        (df.get('bureau_bad_debt_flag', pd.Series(0, index=df.index)).fillna(0) == 1) |
-        (df.get('inst_late_ratio', pd.Series(0, index=df.index)).fillna(0)
-           > STAGE_THRESHOLDS['late_ratio_stage2']) |
-        (df.get('prev_refused_ratio', pd.Series(0, index=df.index)).fillna(0)
-           > STAGE_THRESHOLDS['prev_refused_stage2'])
+        (df.get('inst_late_ratio', pd.Series(0, index=df.index)).fillna(0) > STAGE_THRESHOLDS['late_ratio_stage2']) |
+        (df.get('prev_refused_ratio', pd.Series(0, index=df.index)).fillna(0) > STAGE_THRESHOLDS['prev_refused_stage2'])
     ) & (stage < 3)
-    stage[s2] = 2
+    
+    stage.loc[s2_mask] = 2
 
     return stage
 
@@ -344,6 +344,19 @@ if __name__ == '__main__':
     t0  = time.time()
     df  = pd.read_parquet(f'{DATA_DIR}/results_df.parquet')
 
+    # --- CHÈN VÀO ĐÂY ---
+    print(f"\n[DEBUG] Kiểm tra dữ liệu Stage 3:")
+    # Kiểm tra xem cột 'bureau_bad_debt_flag' có tồn tại không trước khi sum
+    if 'bureau_bad_debt_flag' in df.columns:
+        print(f"  > Tổng số khách hàng quá hạn > 90 ngày: {df['bureau_bad_debt_flag'].sum()}")
+    else:
+        print("  > Cảnh báo: Không tìm thấy cột 'bureau_bad_debt_flag' trong dữ liệu.")
+        
+    if 'PRED_PROB' in df.columns:
+        print(f"  > Tổng số khách hàng có PD_12M > 0.7: {(df['PRED_PROB'] > 0.7).sum()}")
+    else:
+        print("  > Cảnh báo: Không tìm thấy cột 'PRED_PROB' trong dữ liệu.")
+    # ---------------------
     lgd = estimate_lgd(df)
     ead = estimate_ead(df)
 

@@ -43,12 +43,12 @@ Hệ thống triển khai kiến trúc **Multi-Model Benchmark** giúp tối đa
 ## 📈 Hiệu Năng Mô Hình (Model Performance)
 Hệ thống sử dụng các chỉ số đo lường quy chuẩn của ngành quản trị rủi ro tài chính ngân hàng để đánh giá và so sánh toàn diện năng lực phân tách nhóm Tốt/Xấu của danh mục đầu tư:
 
-| Mô hình (Model) | OOF_AUC | Gini_Coefficient | KS_Statistic | Brier_Score | Trạng thái (Status) |
+| Mô hình (Model) | OOF_AUC | Gini_Coefficient | KS_Statistic | Brier_Score | Trạng thái |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Random Forest** | 0.7592 | 0.5184 | 38.09% | 0.06766 | Benchmark |
-| **CatBoost** | 0.7847 | 0.5694 | 42.81% | 0.06595 | Contender |
-| **LightGBM** | 0.7856 | 0.5711 | 42.83% | 0.06598 | Contender |
-| **XGBoost** | **0.7869** | **0.5739** | **42.85%** | **0.06584** | **Champion** |
+| **LightGBM** | **0.7842** | **0.5683** | **42.66** | **0.06608** | **Champion** |
+| **CatBoost** | 0.7828 | 0.5655 | 42.32 | 0.06608 | Contender |
+| **XGBoost** | 0.7783 | 0.5567 | 41.44 | 0.06645 | Contender |
+| **Random Forest** | 0.7592 | 0.5184 | 38.09 | 0.06766 | Benchmark |
 
 *Ghi chú: Kết quả trên được trích xuất tự động từ luồng thực nghiệm K-Fold và đồng bộ chính xác 100% với tập tin báo cáo hiệu năng `reports/model_comparison_leaderboard.csv`.*
 

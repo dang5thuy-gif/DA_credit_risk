@@ -45,7 +45,11 @@ if not os.path.exists(model_path) or not os.path.exists(feature_list_path):
 
 step("Loading best production model & synchronized feature list...")
 with open(model_path, 'rb') as f:
-    model = pickle.load(f)
+    model_list = pickle.load(f)
+
+# SHAP chỉ hỗ trợ giải thích từng mô hình, chọn fold đầu tiên làm đại diện
+model = model_list[0]
+
 with open(feature_list_path, 'rb') as f:
     FEATURES = pickle.load(f)
 
@@ -187,7 +191,7 @@ pdp_features = [f for f in pdp_candidates if f in FEATURES]
 if pdp_features:
     fig, ax = plt.subplots(figsize=(12, 8))
     PartialDependenceDisplay.from_estimator(
-        model, X_sample, pdp_features,
+        model_list[0], X_sample, pdp_features,
         ax=ax, grid_resolution=40, 
         line_kw={"color": "#E74C3C", "linewidth": 2}
     )

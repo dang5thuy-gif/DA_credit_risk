@@ -1,21 +1,21 @@
 {
-    "XGBoost": {
-        "OOF_AUC": 0.7869,
-        "Gini_Coefficient": 0.5739,
-        "KS_Statistic": 42.85,
-        "Brier_Score": 0.06584
-    },
     "LightGBM": {
-        "OOF_AUC": 0.7856,
-        "Gini_Coefficient": 0.5711,
-        "KS_Statistic": 42.83,
-        "Brier_Score": 0.06598
+        "OOF_AUC": 0.7842,
+        "Gini_Coefficient": 0.5683,
+        "KS_Statistic": 42.66,
+        "Brier_Score": 0.06608
     },
-    "CatBoost": {
-        "OOF_AUC": 0.7847,
-        "Gini_Coefficient": 0.5694,
-        "KS_Statistic": 42.81,
-        "Brier_Score": 0.06595
+    "CatBoost_Ordered": {
+        "OOF_AUC": 0.7828,
+        "Gini_Coefficient": 0.5655,
+        "KS_Statistic": 42.32,
+        "Brier_Score": 0.06608
+    },
+    "XGBoost": {
+        "OOF_AUC": 0.7783,
+        "Gini_Coefficient": 0.5567,
+        "KS_Statistic": 41.44,
+        "Brier_Score": 0.06645
     },
     "RandomForest": {
         "OOF_AUC": 0.7592,

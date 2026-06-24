@@ -113,9 +113,15 @@ if os.path.exists(best_params_path):
         log("✓ Đã nạp thành công bộ tham số tối ưu từ Optuna cho LightGBM.")
     except Exception: pass
 
+neg, pos = np.bincount(y)
+pos_weight = neg / pos
+
+# Tự động lấy các cột phân loại (Categorical Features)
+cat_cols = [c for c in X.columns if X[c].dtype == 'object' or X[c].dtype.name == 'category']
+
 model_templates = {
     'LightGBM': {
-        'constructor': lambda: lgb.LGBMClassifier(**lgbm_init_params),
+        'constructor': lambda: lgb.LGBMClassifier(**lgbm_init_params, class_weight='balanced'),
         'fit_params': lambda X_v, y_v: {
             'eval_set': [(X_v, y_v)],
             'callbacks': [lgb.early_stopping(stopping_rounds=100, verbose=False)]
@@ -123,19 +129,50 @@ model_templates = {
     },
     'XGBoost': {
         'constructor': lambda: xgb.XGBClassifier(
-            objective='binary:logistic', eval_metric='auc', learning_rate=0.03,
-            max_depth=6, subsample=0.8, colsample_bytree=0.8,
-            random_state=42, n_estimators=1500, n_jobs=-1
+            objective='binary:logistic',
+            eval_metric='auc',
+            tree_method='hist',
+            grow_policy='lossguide',           # Leaf-wise growth
+            max_depth=8,
+            learning_rate=0.05,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            reg_alpha=0.05,
+            reg_lambda=1.0,
+            gamma=0.1,
+            min_child_weight=5,
+            scale_pos_weight=pos_weight,
+            random_state=42,
+            n_estimators=2000,
+            n_jobs=-1,
+            # Học thuật: Monotonic Constraints (rất quan trọng credit risk)
+            # monotone_constraints=[-1 if 'EXT_SOURCE' in col else 0 for col in FEATURES]
         ),
         'fit_params': lambda X_v, y_v: {
             'eval_set': [(X_v, y_v)],
+            'early_stopping_rounds': 100,
             'verbose': False
         }
     },
-    'CatBoost': {
+
+    'CatBoost_Ordered': {
         'constructor': lambda: CatBoostClassifier(
-            iterations=1500, learning_rate=0.03, depth=6, eval_metric='AUC',
-            random_state=42, verbose=False, thread_count=-1
+            iterations=2000,
+            learning_rate=0.05,
+            depth=8,
+            eval_metric='AUC',
+            boosting_type='Ordered',           # Ordered Boosting - điểm mạnh lớn nhất
+            bootstrap_type='Bayesian',
+            bagging_temperature=1.0,
+            random_strength=1,
+            cat_features=cat_cols,             # Native categorical handling
+            one_hot_max_size=10,
+            od_type='Iter',
+            od_wait=50,
+            random_state=42,
+            verbose=False,
+            thread_count=-1,
+            # class_weights=[1, pos_weight]    # nếu cần
         ),
         'fit_params': lambda X_v, y_v: {
             'eval_set': [(X_v, y_v)],
@@ -146,9 +183,9 @@ model_templates = {
     'RandomForest': {
         'constructor': lambda: RandomForestClassifier(
             n_estimators=300, max_depth=10, min_samples_leaf=20,
-            random_state=42, n_jobs=-1, verbose=0
+            random_state=42, n_jobs=-1
         ),
-        'fit_params': lambda X_v, y_v: {} # RF không sử dụng early stopping dựa trên tập val
+        'fit_params': lambda X_v, y_v: {}
     }
 }
 
@@ -262,101 +299,130 @@ leaderboard_path = os.path.join(REPORTS_DIR, 'model_comparison_leaderboard.csv')
 leaderboard_df.to_csv(leaderboard_path, index=False)
 log(f"\nSaved Leaderboard comparison report to: {leaderboard_path}")
 
+# --- Bổ sung vào modeling.py sau STEP 5 ---
+header("PHÂN TÍCH HỌC THUẬT: Calibration Curves")
+plt.figure(figsize=(8, 6))
+
+for model_name in model_templates:
+    prob_true, prob_pred = calibration_curve(y, dict_oof_calibrated[model_name], n_bins=10)
+    plt.plot(prob_pred, prob_true, marker='s', label=f'{model_name}')
+
+plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Perfectly Calibrated')
+plt.title('Reliability Diagram: So sánh độ tin cậy xác suất giữa các thuật toán')
+plt.xlabel('Xác suất dự báo trung bình')
+plt.ylabel('Tỷ lệ vỡ nợ thực tế')
+plt.legend()
+plt.grid(alpha=0.3)
+plt.savefig(os.path.join(REPORTS_DIR, 'calibration_curve.png'), dpi=150)
+plt.close()
+print("✓ Đã xuất biểu đồ Reliability Diagram.")
+
 
 # ═══════════════════════════════════════════════════════════════
-# STEP 6 — Export Production Artifacts & Multi-Model Folds
+# STEP 6 — Export Production Artifacts
 # ═══════════════════════════════════════════════════════════════
 header("STEP 6 — Exporting Winning Production Artifacts & Multi-Model Folds")
 
-best_model_name = leaderboard_df.loc[0, 'Model']
-best_model_auc  = leaderboard_df.loc[0, 'OOF_AUC']
-step(f"Mô hình chiến thắng (Winner): {best_model_name} với AUC = {best_model_auc:.4f}")
+all_model_names = list(model_templates.keys())
 
-# ---- 1. Lưu trọn bộ 5 Folds của từng thuật toán Boosting theo cấu trúc sơ đồ ----
-for model_name in ['LightGBM', 'XGBoost', 'CatBoost']:
-    file_prefix = 'lgbm' if model_name == 'LightGBM' else model_name.lower()
-    
+# Lưu 5-Folds
+for model_name in all_model_names:
+    if model_name == 'CatBoost_Ordered':
+        file_prefix = 'catboost'
+    elif model_name == 'LightGBM':
+        file_prefix = 'lgbm'
+    else:
+        file_prefix = model_name.lower()
+        
     for fold_idx, clf_fold in enumerate(dict_trained_models[model_name], 1):
         fold_file_name = f"{file_prefix}_fold{fold_idx}.pkl"
-        fold_file_path = os.path.join(MODELS_DIR, fold_file_name)
-        with open(fold_file_path, 'wb') as f:
+        with open(os.path.join(MODELS_DIR, fold_file_name), 'wb') as f:
             pickle.dump(clf_fold, f)
-log("✓ Đã lưu trọn bộ file nhị phân 5-Folds của [LightGBM, XGBoost, CatBoost] vào thư mục /models")
 
-# ---- 2. Lưu bộ hiệu chuẩn, danh sách đặc trưng và mô hình chiến thắng ----
-best_clf_obj = dict_trained_models[best_model_name][0]
-best_calibrator_obj = dict_calibrators[best_model_name]
+log("✓ Đã lưu trọn bộ 5-Folds của tất cả các mô hình.")
+
+# Lưu Best Production Model (single best fold)
+best_model_name = leaderboard_df.loc[0, 'Model']
+best_model_list = dict_trained_models[best_model_name] # Lưu list 5 models
 
 with open(os.path.join(MODELS_DIR, 'best_production_model.pkl'), 'wb') as f:
-    pickle.dump(best_clf_obj, f)
-    
+    pickle.dump(best_model_list, f)
+
 with open(os.path.join(MODELS_DIR, 'isotonic_calibrator.pkl'), 'wb') as f:
-    pickle.dump(best_calibrator_obj, f)
-    
+    pickle.dump(dict_calibrators[best_model_name], f)
+
 with open(os.path.join(MODELS_DIR, 'feature_list.pkl'), 'wb') as f:
     pickle.dump(FEATURES, f)
 
-# ---- 3. Tự động xuất file model_metrics.json chứa thông tin hiệu năng ----
-metrics_dict = leaderboard_df.set_index('Model').to_dict(orient='index')
-metrics_json_path = os.path.join(MODELS_DIR, 'model_metrics.json')
-with open(metrics_json_path, 'w', encoding='utf-8') as f:
-    json.dump(metrics_dict, f, indent=4, ensure_ascii=False)
-log("✓ Đã khởi tạo và xuất tập tin lưu trữ metadata hiệu năng hệ thống: model_metrics.json")
-
-# ---- 4. Đồng bộ kết quả dự báo kết quả cuối cùng ----
-results_df = pd.DataFrame({
-    'SK_ID_CURR': train_df['SK_ID_CURR'],
-    'TARGET': y,
-    'PRED_PROB': dict_oof_calibrated[best_model_name]
-})
-results_df.to_parquet(os.path.join(DATA_DIR, 'results_df.parquet'), index=False)
-log("✓ Đã cập nhật results_df.parquet dựa trên xác suất đã hiệu chuẩn của mô hình tốt nhất.")
-
-# Tạo file submission nộp Kaggle thương mại theo mô hình tốt nhất
-submission = pd.DataFrame({
-    'SK_ID_CURR': test_df['SK_ID_CURR'].astype(int),
-    'TARGET': dict_test_calibrated[best_model_name]
-})
-submission_path = os.path.join(ROOT_DIR, 'data', 'submission.csv')
-submission.to_csv(submission_path, index=False)
-log(f"✓ Đã xuất tệp tin Kaggle submission format tại: {submission_path}")
+log(f"✓ Best Production Model saved: {best_model_name}")
 
 
 # ═══════════════════════════════════════════════════════════════
-# STEP 7 — Plot Multi-Model ROC Curves Comparison
+# STEP 7 — Plot ROC Curves
 # ═══════════════════════════════════════════════════════════════
-header("STEP 7 — Plotting ROC Curves Comparison")
+header("STEP 7 — Plotting ROC Curves")
 
-plt.figure(figsize=(9, 7))
-colors = {'LightGBM': 'darkorange', 'XGBoost': 'teal', 'CatBoost': 'purple', 'RandomForest': 'crimson'}
+plt.figure(figsize=(10, 8))
+color_map = {
+    'LightGBM': 'darkorange', 
+    'XGBoost': 'teal', 
+    'CatBoost_Ordered': 'indigo',
+    'RandomForest': 'crimson'
+}
 
-for model_name in model_templates:
+for model_name in all_model_names:
     fpr, tpr, _ = roc_curve(y, dict_oof_calibrated[model_name])
     auc_val = roc_auc_score(y, dict_oof_calibrated[model_name])
-    plt.plot(fpr, tpr, color=colors[model_name], lw=2, 
+    plt.plot(fpr, tpr, color=color_map.get(model_name, 'blue'), lw=2.2,
              label=f'{model_name} (AUC = {auc_val:.4f})')
 
 plt.plot([0, 1], [0, 1], color='navy', lw=1.5, linestyle='--', label='Random Guess')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate (FPR)')
-plt.ylabel('True Positive Rate (TPR)')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
 plt.title('Benchmark Comparison — Out-Of-Fold ROC Curves')
 plt.legend(loc="lower right")
 plt.grid(alpha=0.3)
 plt.tight_layout()
-
-roc_plot_path = os.path.join(REPORTS_DIR, 'model_benchmark_roc.png')
-plt.savefig(roc_plot_path, dpi=150)
+plt.savefig(os.path.join(REPORTS_DIR, 'model_benchmark_roc.png'), dpi=150)
 plt.close()
-log(f"Đồ thị so sánh đường cong ROC đã lưu tại: {roc_plot_path}")
+
+log(f"✓ Saved ROC Curve: reports/model_benchmark_roc.png")
+
+
+# ═══════════════════════════════════════════════════════════════
+# STEP 8 — Export Metrics, Submission & Final Summary
+# ═══════════════════════════════════════════════════════════════
+header("STEP 8 — Export Final Metrics & Submission")
+
+# Export model_metrics.json
+metrics_dict = leaderboard_df.set_index('Model').to_dict(orient='index')
+with open(os.path.join(MODELS_DIR, 'model_metrics.json'), 'w', encoding='utf-8') as f:
+    json.dump(metrics_dict, f, indent=4, ensure_ascii=False)
+
+log("✓ Saved model_metrics.json")
+
+# Tạo submission.csv cho Kaggle
+submission = pd.DataFrame({
+    'SK_ID_CURR': test_df['SK_ID_CURR'].astype(int),
+    'TARGET': dict_test_calibrated[best_model_name]
+})
+submission.to_csv(os.path.join(DATA_DIR, 'submission.csv'), index=False)
+log("✓ Saved submission.csv")
+
+best_model_name = leaderboard_df.loc[0, 'Model']
+best_model_auc  = leaderboard_df.loc[0, 'OOF_AUC']
 
 print(f"""
 {'='*75}
   MULTI-MODEL BENCHMARK PIPELINE COMPLETE
 {'='*75}
-  Tổng thời gian thực thi : {time.time()-t_total:.1f}s
   Mô hình tối ưu nhất    : {best_model_name} (AUC: {best_model_auc:.4f})
-  Báo cáo lưu trữ tại    : reports/model_comparison_leaderboard.csv
+  Tổng thời gian         : {time.time()-t_total:.1f}s
+  Các file quan trọng đã được lưu:
+    • best_production_model.pkl (5 folds)
+    • feature_list.pkl
+    • isotonic_calibrator.pkl
+    • model_metrics.json
+    • submission.csv
 {'='*75}
 """)
